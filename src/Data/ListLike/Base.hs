@@ -136,7 +136,8 @@ class (FoldableLL full item, Monoid full) =>
     map :: ListLike full' item' => (item -> item') -> full -> full'
     map func inp  
         | null inp = empty
-        | otherwise = cons (func (head inp)) (map func (tail inp))
+        | otherwise = case uncons inp of 
+                      ~ (Just (headInp, tailInp)) -> cons (func (headInp)) (map func (tailInp))
 
     {- | Like 'map', but without the possibility of changing the type of
        the item.  This can have performance benefits for things such as
@@ -150,7 +151,8 @@ class (FoldableLL full item, Monoid full) =>
     reverse l = rev l empty
         where rev rl a
                 | null rl = a
-                | otherwise = rev (tail rl) (cons (head rl) a)
+                | otherwise = case uncons rl of 
+                               ~ (Just (head_rl, tail_rl)) -> rev (tail_rl) (cons (head_rl) a)
     {- | Add an item between each element in the structure -}
     intersperse :: item -> full -> full
     intersperse sep l
